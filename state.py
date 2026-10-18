@@ -1,4 +1,3 @@
-# Ye file pure project ka memory hai
 class SalesState:
     def __init__(self):
         self.customer_message = ""
