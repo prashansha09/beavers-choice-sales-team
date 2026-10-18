@@ -1,38 +1,32 @@
-from tools import *
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_react_agent
+from tools import check_inventory, get_quote_history, calculate_bulk_discount, generate_quote, check_delivery_timeline, check_cash_balance
 
-def orchestrator_agent(message):
-    # Dynamic paper type retreiving
-    message = message.upper()
-    paper_type = "A4"  # default
-    for pt in ["A4", "A3", "LETTER", "CARDSTOCK"]:
-        if pt in message:
-            paper_type = pt if pt != "LETTER" else "Letter"
-            if paper_type == "A4": paper_type = "A4"
-            if paper_type == "A3": paper_type = "A3"
-            break
-    
-    # retreive quantity
-    import re
-    nums = re.findall(r'\d+', message)
-    qty = int(nums[0]) if nums else 100
-    
-    print(f"[Orchestrator] Paper: {paper_type}, Qty: {qty}")
-    return paper_type, qty
+# LLM for Vocareum
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-def inventory_agent(paper_type):
-    result = check_inventory(paper_type)
-    print(f"[Inventory] {result}")
-    return result
+# 4 LLM Agents
 
-def quote_agent(paper_type, qty):
-    history = get_history()
-    quote_data = generate_quote(paper_type, qty, history)
-    print(f"[Quote] History: {history['last_order']}, {quote_data['text']}")
-    return quote_data
+orchestrator_agent = create_react_agent(
+    llm, 
+    tools=[], 
+    prompt="You are Orchestrator Agent. You receive customer request, extract paper_type (A4, A3, Letter, Cardstock) and quantity. Pass to next agent."
+)
 
-def sales_agent(paper_type, qty, final_price):
-    fulfill = fulfill_order(paper_type, qty)
-    delivery = check_delivery_timeline(qty)
-    cash = check_cash_balance(final_price)
-    print(f"[Sales] {fulfill} | {delivery} | {cash}")
-    return f"{fulfill} - {delivery}"
+inventory_agent = create_react_agent(
+    llm,
+    tools=[check_inventory],
+    prompt="You are Inventory Agent. You MUST use check_inventory tool to verify stock."
+)
+
+quote_agent = create_react_agent(
+    llm,
+    tools=[get_quote_history, calculate_bulk_discount, generate_quote],
+    prompt="You are Quote Agent. Use get_quote_history, calculate_bulk_discount and generate_quote tools to create a quote."
+)
+
+sales_agent = create_react_agent(
+    llm,
+    tools=[check_delivery_timeline, check_cash_balance],
+    prompt="You are Sales Agent. Use check_delivery_timeline and check_cash_balance to finalize order and give final response to customer."
+)
