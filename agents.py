@@ -1,9 +1,9 @@
 from tools import *
 
-# 4 Agents simple function ke form me
+# 4 Agents simple function
 
 def orchestrator_agent(message):
-    print(f"[Orchestrator] Customer bola: {message}")
+    print(f"[Orchestrator] Customer says: {message}")
     return "A4"  # paper type nikal liya
 
 def inventory_agent(paper_type):

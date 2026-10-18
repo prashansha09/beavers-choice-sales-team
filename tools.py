@@ -1,20 +1,18 @@
-# Ye 6 tools hai jo agents use karenge
-
 def check_inventory(paper_type):
-    return f"{paper_type} paper stock me hai - 500 units"
+    return f"{paper_type} paper is in stock - 500 units"
 
 def get_history(customer):
-    return "Customer ne pichle mahine 200 A4 liye the"
+    return "Customer purchased 200 A4 paper last month"
 
 def generate_quote(paper_type, quantity):
     price = quantity * 2
-    return f"Price ${price} - 10% discount ke saath"
+    return f"Price ${price} - with 10% discount"
 
 def fulfill_order():
-    return "Order confirm ho gaya"
+    return "Order confirmed"
 
 def check_delivery_timeline():
-    return "Delivery 3 din me hogi"
+    return "Delivery will be in 3 days"
 
 def check_cash_balance():
-    return "Cash balance OK hai"
+    return "Cash balance OK"
