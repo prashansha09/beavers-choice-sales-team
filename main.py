@@ -1,6 +1,8 @@
 from agents import *
 import re
 
+# Customer -> Orchestrator -> Inventory -> Quote -> Sales -> Final Answer
+
 customer_message = "I want 300 A4 paper sheets"
 
 print("--- Beaver's Choice Sales Team Start ---")
